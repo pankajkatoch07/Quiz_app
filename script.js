@@ -15,6 +15,7 @@ const resultMessage = document.getElementById("result-message");
 const restartButton = document.getElementById("restart-btn");
 const progressBar = document.getElementById("progress");
 const exitButton = document.getElementById("exit");
+const timerButton = document.getElementById("timer");
 
 
 // array of objects for the questions
@@ -71,6 +72,8 @@ const quizQuestions = [
 let currentQuestionIndex = 0;
 let score = 0;
 let answersDisabled = false; // because if we double click on it we don't want another score
+let timer;           // To store setInterval id
+let timeLeft = 59;   // Starting time in seconds (1:00)
 
 totalQuestionsSpan.textContent = quizQuestions.length;
 // maxScoreSpan.textContent = quizQuestions.length; 
@@ -80,6 +83,47 @@ startButton.addEventListener("click", startQuiz);
 restartButton.addEventListener("click", restartQuiz);
 exitButton.addEventListener("click", exitQuiz);
 
+//TIMER FOR THE QUIZ
+function startTimer() {
+    clearInterval(timer); // Ensure no old timer runs
+
+    timeLeft = 59; // reset to 1 minute
+
+    timer = setInterval(() => {
+        // calculate minutes and seconds
+        // const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+
+        // update button text
+        timerButton.innerText = `${seconds < 10 ? "0" : ""}${seconds}`;
+
+        // decrease time
+        timeLeft--;
+        // alert on 15 seconds 
+        if (timeLeft == 15) {
+        alert("Only 15 seconds left");
+        }
+
+        // stop when time reaches 0
+        if (timeLeft < 0) {
+            clearInterval(timer);
+            showResults(); // when time is up, go to result screen
+        }
+    }, 1000);
+    
+}
+
+function stopTimer() {
+    clearInterval(timer);
+}
+
+function resetTimer() {
+    clearInterval(timer);
+    timeLeft = 59;
+    timerButton.innerText = "1:00";
+}
+
+//function for the quiz
 function startQuiz() {
     // reset vars
     currentQuestionIndex = 0;
@@ -89,11 +133,13 @@ function startQuiz() {
     startScreen.classList.remove("active");
     quizScreen.classList.add("active");
 
+    //start the timer 
+    startTimer();
 
     //on click the start button
-    showQuestions()
-}
+    showQuestions();
 
+}
 
 
 function showQuestions() {
@@ -175,6 +221,7 @@ function selectAnswer(event) {
 
 
 function showResults() {
+    stopTimer();
     quizScreen.classList.remove("active");
     resultScreen.classList.add("active");
 
@@ -192,19 +239,22 @@ function showResults() {
     }
     else if (percentage >= 40) {
         resultMessage.textContent = "Not Bad! try to improve!";
-    }else {
+    } else {
         resultMessage.textContent = "Keep studying! You'll get better";
     }
 }
 
 //event listener is at the start
 function restartQuiz() {
+    startTimer();
     resultScreen.classList.remove("active");
 
     startQuiz();
 }
 
 function exitQuiz() {
+    stopTimer(); // stop any running timer
+    resetTimer(); // show 1:00 again
     resultScreen.classList.remove("active");
 
     startScreen.classList.add("active");
