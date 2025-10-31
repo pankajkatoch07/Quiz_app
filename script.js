@@ -14,6 +14,7 @@ const maxScoreSpan = document.getElementById("max-score");
 const resultMessage = document.getElementById("result-message");
 const restartButton = document.getElementById("restart-btn");
 const progressBar = document.getElementById("progress");
+const exitButton = document.getElementById("exit");
 
 
 // array of objects for the questions
@@ -77,6 +78,7 @@ totalQuestionsSpan.textContent = quizQuestions.length;
 // event listeners
 startButton.addEventListener("click", startQuiz);
 restartButton.addEventListener("click", restartQuiz);
+exitButton.addEventListener("click", exitQuiz);
 
 function startQuiz() {
     // reset vars
@@ -202,7 +204,11 @@ function restartQuiz() {
     startQuiz();
 }
 
+function exitQuiz() {
+    resultScreen.classList.remove("active");
 
+    startScreen.classList.add("active");
+}
 
 
 
